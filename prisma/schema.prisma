@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  role          String    @default("EMPLOYEE") // ADMIN, HR, MANAGER, EMPLOYEE
+  employeeId    String?   @unique
+  employee      Employee? @relation(fields: [employeeId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Department {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?
+  managerId   String?
+  employees   Employee[]
+  jobs        Job[]
+  createdAt   DateTime   @default(now())
+}
+
+model Employee {
+  id              String       @id @default(cuid())
+  employeeCode    String       @unique
+  firstName       String
+  lastName        String
+  email           String       @unique
+  phone           String?
+  dateOfBirth     DateTime?
+  gender          String?
+  address         String?
+  city            String?
+  state           String?
+  country         String       @default("India")
+  pinCode         String?
+  photo           String?
+
+  // Work Info
+  departmentId    String?
+  department      Department?  @relation(fields: [departmentId], references: [id])
+  designation     String?
+  employmentType  String       @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, INTERN
+  workLocation    String?
+  managerId       String?
+  manager         Employee?    @relation("ManagerEmployee", fields: [managerId], references: [id])
+  subordinates    Employee[]   @relation("ManagerEmployee")
+  joiningDate     DateTime     @default(now())
+  probationEnd    DateTime?
+  confirmDate     DateTime?
+  exitDate        DateTime?
+  status          String       @default("ACTIVE") // ACTIVE, INACTIVE, RESIGNED, TERMINATED
+
+  // Salary
+  basicSalary     Float        @default(0)
+  hra             Float        @default(0)
+  da              Float        @default(0)
+  ta              Float        @default(0)
+  otherAllowance  Float        @default(0)
+  pfEmployee      Float        @default(0)
+  pfEmployer      Float        @default(0)
+  esiEmployee     Float        @default(0)
+  esiEmployer     Float        @default(0)
+  professionalTax Float        @default(0)
+  bankAccount     String?
+  bankName        String?
+  ifscCode        String?
+  panNumber       String?
+  aadharNumber    String?
+
+  user            User?
+  attendance      Attendance[]
+  leaves          Leave[]
+  payslips        Payslip[]
+  goals           Goal[]
+  reviews         Review[]     @relation("ReviewEmployee")
+  reviewsGiven    Review[]     @relation("ReviewReviewer")
+  documents       Document[]
+  applications    Application[]
+  kycProfile      KYCProfile?
+  kycDocuments    KYCDocument[]
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Attendance {
+  id           String    @id @default(cuid())
+  employeeId   String
+  employee     Employee  @relation(fields: [employeeId], references: [id])
+  date         DateTime
+  checkIn      DateTime?
+  checkOut     DateTime?
+  hoursWorked  Float?
+  status       String    @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, HOLIDAY, WEEKEND, ON_LEAVE
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  @@unique([employeeId, date])
+}
+
+model LeaveType {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+  daysAllowed Int     @default(0)
+  carryForward Boolean @default(false)
+  isPaid      Boolean @default(true)
+  color       String  @default("#3b82f6")
+  leaves      Leave[]
+}
+
+model Leave {
+  id          String    @id @default(cuid())
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  leaveTypeId String
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+  startDate   DateTime
+  endDate     DateTime
+  days        Float
+  reason      String
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  approvedBy  String?
+  approvedAt  DateTime?
+  comments    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Payslip {
+  id               String   @id @default(cuid())
+  employeeId       String
+  employee         Employee @relation(fields: [employeeId], references: [id])
+  month            Int
+  year             Int
+  basicSalary      Float
+  hra              Float    @default(0)
+  da               Float    @default(0)
+  ta               Float    @default(0)
+  otherAllowance   Float    @default(0)
+  grossSalary      Float
+  pfEmployee       Float    @default(0)
+  pfEmployer       Float    @default(0)
+  esiEmployee      Float    @default(0)
+  esiEmployer      Float    @default(0)
+  professionalTax  Float    @default(0)
+  tds              Float    @default(0)
+  otherDeductions  Float    @default(0)
+  totalDeductions  Float
+  netSalary        Float
+  daysWorked       Int
+  daysInMonth      Int
+  status           String   @default("DRAFT") // DRAFT, PUBLISHED
+  createdAt        DateTime @default(now())
+
+  @@unique([employeeId, month, year])
+}
+
+model Goal {
+  id          String   @id @default(cuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  title       String
+  description String?
+  category    String   @default("PERFORMANCE") // PERFORMANCE, LEARNING, PERSONAL
+  targetDate  DateTime?
+  progress    Int      @default(0)
+  status      String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ON_HOLD, CANCELLED
+  quarter     String?
+  year        Int      @default(2025)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  employeeId   String
+  employee     Employee @relation("ReviewEmployee", fields: [employeeId], references: [id])
+  reviewerId   String
+  reviewer     Employee @relation("ReviewReviewer", fields: [reviewerId], references: [id])
+  period       String
+  year         Int
+  ratings      String   // JSON stored as string: {technical, communication, teamwork, leadership, overall}
+  strengths    String?
+  improvements String?
+  comments     String?
+  status       String   @default("PENDING") // PENDING, SUBMITTED, ACKNOWLEDGED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Job {
+  id             String        @id @default(cuid())
+  title          String
+  departmentId   String?
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  location       String?
+  type           String        @default("FULL_TIME")
+  experience     String?
+  description    String
+  requirements   String?
+  salary         String?
+  openings       Int           @default(1)
+  status         String        @default("OPEN") // OPEN, CLOSED, ON_HOLD
+  applications   Application[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id])
+  employeeId  String?
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+  candidateName  String
+  candidateEmail String
+  candidatePhone String?
+  resumeUrl   String?
+  coverLetter String?
+  stage       String   @default("APPLIED") // APPLIED, SCREENING, INTERVIEW, OFFER, HIRED, REJECTED
+  rating      Int?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  name        String
+  type        String   // OFFER_LETTER, EXPERIENCE, ID_PROOF, PAYSLIP, etc.
+  fileUrl     String
+  fileSize    Int?
+  mimeType    String?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  priority    String   @default("NORMAL") // HIGH, NORMAL, LOW
+  targetRole  String?  // null = all, or specific role
+  createdBy   String
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model Holiday {
+  id          String   @id @default(cuid())
+  name        String
+  date        DateTime
+  type        String   @default("NATIONAL") // NATIONAL, REGIONAL, OPTIONAL
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+// ── KYC ──────────────────────────────────────────────────────────────────────
+
+model KYCProfile {
+  id          String    @id @default(cuid())
+  employeeId  String    @unique
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  // Overall status
+  status      String    @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED
+  completionPct Int     @default(0)
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+  reviewedBy  String?
+  remarks     String?   // admin notes
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model KYCDocument {
+  id               String    @id @default(cuid())
+  employeeId       String
+  employee         Employee  @relation(fields: [employeeId], references: [id])
+  // Document type: AADHAAR | PAN | PASSPORT | BANK | ADDRESS_PROOF | PHOTO | EDUCATION | EXPERIENCE | OTHER
+  docType          String
+  label            String    // Human readable label
+  docNumber        String?   // Aadhaar number, PAN number, account number, etc.
+  fileUrl          String?   // uploaded file URL
+  fileName         String?
+  // Per-document verification
+  status           String    @default("PENDING") // PENDING, SUBMITTED, VERIFIED, REJECTED
+  rejectionReason  String?
+  verifiedBy       String?
+  verifiedAt       DateTime?
+  isRequired       Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([employeeId, docType])
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  logo        String?
+  industry    String?
+  website     String?
+  email       String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  country     String   @default("India")
+  pinCode     String?
+  gstin       String?
+  pan         String?
+  cin         String?
+  foundedYear Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
