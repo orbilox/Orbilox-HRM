@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import {
   Building2, LayoutDashboard, Users, Clock, Calendar,
   DollarSign, Target, Briefcase, FileText, Settings,
-  LogOut, ChevronLeft, Menu, Bell, FileSearch, UserCircle, Landmark, UsersRound, Smile
+  LogOut, ChevronLeft, Menu, Bell, FileSearch, UserCircle, Landmark, UsersRound, Smile, ShieldCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ const adminNavItems = [
   { href: "/recruitment", icon: Briefcase, label: "Recruitment" },
   { href: "/documents", icon: FileText, label: "Documents" },
   { href: "/announcements", icon: Bell, label: "Announcements" },
+  { href: "/kyc", icon: ShieldCheck, label: "KYC" },
   { href: "/reports", icon: FileSearch, label: "Reports" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
@@ -34,6 +35,7 @@ const employeeNavItems = [
   { href: "/performance", icon: Target, label: "Performance" },
   { href: "/payroll", icon: Landmark, label: "My Pay" },
   { href: "/documents", icon: FileText, label: "Documents" },
+  { href: "/kyc", icon: ShieldCheck, label: "My KYC" },
   { href: "/announcements", icon: Bell, label: "Engage" },
 ];
 
