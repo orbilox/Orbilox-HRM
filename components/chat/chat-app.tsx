@@ -26,7 +26,9 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
 
   // Seed default channels on first load
   useEffect(() => {
-    fetch("/api/chat/seed", { method: "POST" }).then(() => setSeeded(true));
+    fetch("/api/chat/seed", { method: "POST" })
+      .then(() => setSeeded(true))
+      .catch(() => setSeeded(true)); // still show UI even if seed fails
   }, []);
 
   if (!seeded) {

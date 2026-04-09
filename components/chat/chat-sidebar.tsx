@@ -46,8 +46,13 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
   async function loadRooms() {
     try {
       const res = await fetch("/api/chat/rooms");
-      const data = await res.json();
+      if (!res.ok) { setLoading(false); return; }
+      const text = await res.text();
+      if (!text) { setLoading(false); return; }
+      const data = JSON.parse(text);
       setRooms(data.rooms ?? []);
+    } catch (e) {
+      console.error("loadRooms error", e);
     } finally {
       setLoading(false);
     }
@@ -167,13 +172,17 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
           <>
             {/* Channels section */}
             <div>
-              <button
-                onClick={() => setChannelsOpen(!channelsOpen)}
-                className="flex items-center gap-1 w-full px-2 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+              <div
+                className="flex items-center gap-1 w-full px-2 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-white transition-colors cursor-pointer"
               >
-                {channelsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                Channels
-                <span className="ml-auto text-gray-500 normal-case font-normal">{channels.length}</span>
+                <button
+                  onClick={() => setChannelsOpen(!channelsOpen)}
+                  className="flex items-center gap-1 flex-1 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+                >
+                  {channelsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                  Channels
+                  <span className="ml-auto text-gray-500 normal-case font-normal">{channels.length}</span>
+                </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setShowNewChannel(true); setShowNewDM(false); }}
                   className="ml-1 p-0.5 hover:text-white hover:bg-white/10 rounded transition-colors"
@@ -181,7 +190,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
-              </button>
+              </div>
 
               {channelsOpen && (
                 <div className="mt-1 space-y-0.5">
@@ -244,13 +253,15 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
 
             {/* Direct Messages section */}
             <div className="mt-3">
-              <button
-                onClick={() => setDmsOpen(!dmsOpen)}
-                className="flex items-center gap-1 w-full px-2 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
-              >
-                {dmsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                Direct Messages
-                <span className="ml-auto text-gray-500 normal-case font-normal">{dms.length}</span>
+              <div className="flex items-center gap-1 w-full px-2 py-1 cursor-pointer">
+                <button
+                  onClick={() => setDmsOpen(!dmsOpen)}
+                  className="flex items-center gap-1 flex-1 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-white transition-colors"
+                >
+                  {dmsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                  Direct Messages
+                  <span className="ml-auto text-gray-500 normal-case font-normal">{dms.length}</span>
+                </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -263,7 +274,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
-              </button>
+              </div>
 
               {dmsOpen && (
                 <div className="mt-1 space-y-0.5">
