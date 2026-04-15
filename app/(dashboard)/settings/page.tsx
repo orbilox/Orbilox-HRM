@@ -4,27 +4,30 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Users, Calendar, Gift, UserCog, Plus, Trash2 } from "lucide-react";
+import UsersPanel from "@/components/settings/users-panel";
 
 async function getSettingsData() {
-  const [company, departments, leaveTypes, holidays, users] = await Promise.all([
+  const [company, departments, leaveTypes, holidays, users, employees] = await Promise.all([
     db.company.findFirst(),
     db.department.findMany({ orderBy: { name: "asc" }, include: { _count: { select: { employees: true } } } }),
     db.leaveType.findMany({ orderBy: { name: "asc" } }),
     db.holiday.findMany({ orderBy: { date: "asc" } }),
-    db.user.findMany({ orderBy: { createdAt: "desc" } }),
+    db.user.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { employee: { select: { firstName: true, lastName: true } } },
+    }),
+    db.employee.findMany({
+      where: { status: "ACTIVE" },
+      select: { id: true, firstName: true, lastName: true, email: true, employeeCode: true },
+      orderBy: { firstName: "asc" },
+    }),
   ]);
-  return { company, departments, leaveTypes, holidays, users };
+  return { company, departments, leaveTypes, holidays, users, employees };
 }
 
-const roleVariant: Record<string, "destructive" | "warning" | "success" | "secondary"> = {
-  ADMIN: "destructive",
-  HR: "warning",
-  MANAGER: "success",
-  EMPLOYEE: "secondary",
-};
 
 export default async function SettingsPage() {
-  const { company, departments, leaveTypes, holidays, users } = await getSettingsData();
+  const { company, departments, leaveTypes, holidays, users, employees } = await getSettingsData();
 
   return (
     <div className="p-6 space-y-6">
@@ -294,54 +297,13 @@ export default async function SettingsPage() {
               <CardTitle className="text-base font-semibold">System Users</CardTitle>
             </CardHeader>
             <CardContent>
-              {users.length === 0 ? (
-                <div className="text-center py-10 text-gray-400">
-                  <UserCog className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">No users found</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left pb-3 font-medium text-gray-500">Email</th>
-                        <th className="text-left pb-3 font-medium text-gray-500">Role</th>
-                        <th className="text-left pb-3 font-medium text-gray-500">Linked Employee</th>
-                        <th className="text-left pb-3 font-medium text-gray-500">Created</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {users.map((user) => (
-                        <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="py-3 pr-4">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs font-bold shrink-0">
-                                {user.email[0].toUpperCase()}
-                              </div>
-                              <span className="text-gray-900">{user.email}</span>
-                            </div>
-                          </td>
-                          <td className="py-3 pr-4">
-                            <Badge variant={roleVariant[user.role] ?? "secondary"} className="text-xs">
-                              {user.role}
-                            </Badge>
-                          </td>
-                          <td className="py-3 pr-4 text-gray-500 text-xs">
-                            {user.employeeId ? (
-                              <span className="text-green-600 font-medium">Linked</span>
-                            ) : (
-                              <span className="text-gray-400">Not linked</span>
-                            )}
-                          </td>
-                          <td className="py-3 pr-4 text-gray-500 text-xs">
-                            {new Date(user.createdAt).toLocaleDateString("en-IN")}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <UsersPanel
+                initialUsers={users.map((u) => ({
+                  ...u,
+                  createdAt: u.createdAt.toISOString(),
+                }))}
+                employees={employees}
+              />
             </CardContent>
           </Card>
         </TabsContent>
