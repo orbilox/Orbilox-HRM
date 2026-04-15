@@ -324,30 +324,65 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
     <div className="flex flex-col min-h-full bg-gray-50">
       {/* ── Welcome Banner ── */}
       <div
-        className="relative overflow-hidden px-6 py-8"
+        className="relative overflow-hidden px-4 sm:px-6 py-5 sm:py-8"
         style={{ background: "linear-gradient(135deg, #4C1D95 0%, #5B21B6 40%, #6D28D9 70%, #7C3AED 100%)" }}
       >
-        {/* decorative blobs */}
         <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/5" />
         <div className="absolute right-24 top-4 w-32 h-32 rounded-full bg-white/5" />
         <div className="absolute -left-8 bottom-0 w-48 h-24 rounded-full bg-white/5" />
-        <div className="relative z-10">
-          <p className="text-purple-200 text-sm font-medium">{data.employee?.department?.name ?? ""}</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            Good {greeting}, {session?.user?.name?.split(" ")[0] ?? "there"}!
-          </h1>
-          <p className="text-purple-200 text-sm mt-1">
-            {data.employee?.designation ?? "Employee"} · {today.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-          </p>
+        <div className="relative z-10 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-purple-200 text-xs sm:text-sm font-medium">{data.employee?.department?.name ?? ""}</p>
+            <h1 className="text-xl sm:text-3xl font-bold text-white mt-0.5">
+              Good {greeting}, {session?.user?.name?.split(" ")[0] ?? "there"}!
+            </h1>
+            <p className="text-purple-200 text-xs sm:text-sm mt-1">
+              {data.employee?.designation ?? "Employee"} · {today.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+            </p>
+          </div>
+          {/* Clock-in status badge in banner on mobile */}
+          <div className="shrink-0 mt-1">
+            {checkIn && !checkOut && (
+              <span className="flex items-center gap-1 text-xs bg-green-400/20 text-green-300 border border-green-400/30 rounded-full px-2 py-1">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                Active
+              </span>
+            )}
+            {checkOut && (
+              <span className="text-xs text-green-300">✓ Done</span>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* ── Mobile Quick Actions Row ── */}
+      <div className="lg:hidden px-4 pt-4 grid grid-cols-4 gap-2">
+        {[
+          { href: "/attendance", label: "Attendance", icon: Clock, color: "bg-purple-100 text-purple-600" },
+          { href: "/leaves", label: "Leaves", icon: Calendar, color: "bg-orange-100 text-orange-600" },
+          { href: "/payroll", label: "Pay", icon: DollarSign, color: "bg-teal-100 text-teal-600" },
+          { href: "/performance", label: "Goals", icon: TrendingUp, color: "bg-blue-100 text-blue-600" },
+        ].map((a) => (
+          <a key={a.href} href={a.href} className="flex flex-col items-center gap-1.5 bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${a.color}`}>
+              <a.icon className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-medium text-gray-600">{a.label}</span>
+          </a>
+        ))}
+      </div>
+
       {/* ── Main Content ── */}
-      <div className="flex-1 p-5 grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div className="flex-1 p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
 
         {/* ── LEFT: Quick Access ── */}
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Quick Access</h2>
+        <div className="lg:col-span-2 space-y-4 order-2 lg:order-none">
+          <h2 className="hidden lg:block text-sm font-semibold text-gray-500 uppercase tracking-wide">Quick Access</h2>
+
+          {/* Time Today — hidden on mobile (shown separately above) */}
+          <div className="hidden lg:block">
+            <TimeWidget checkIn={checkIn} checkOut={checkOut} />
+          </div>
 
           {/* Holidays Carousel */}
           <HolidayCarousel holidays={holidays} />
@@ -362,13 +397,13 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
               <a href="/leaves" className="text-xs text-purple-600 hover:underline">View All</a>
             </div>
             {data.onLeaveToday.length === 0 ? (
-              <div className="flex items-center gap-3 py-3">
-                <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center">
-                  <UserCheck className="w-6 h-6 text-green-500" />
+              <div className="flex items-center gap-3 py-2">
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
+                  <UserCheck className="w-5 h-5 text-green-500" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-700">Everyone is working today!</p>
-                  <p className="text-xs text-gray-400">No one is on leave today.</p>
+                  <p className="text-xs text-gray-400">No one is on leave.</p>
                 </div>
               </div>
             ) : (
@@ -386,28 +421,6 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
             )}
           </div>
 
-          {/* Working Remotely placeholder */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-500" />
-                Working Remotely
-              </h3>
-            </div>
-            <div className="flex items-center gap-3 py-2">
-              <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700">Everyone is at office!</p>
-                <p className="text-xs text-gray-400">No one is working remotely today.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Time Today */}
-          <TimeWidget checkIn={checkIn} checkOut={checkOut} />
-
           {/* My Recent Leaves */}
           {data.recentLeaves.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -419,18 +432,12 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
                 {data.recentLeaves.slice(0, 3).map((leave) => (
                   <div key={leave.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: leave.leaveType.color }}
-                      />
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: leave.leaveType.color }} />
                       <span className="text-xs text-gray-700">{leave.leaveType.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-400">{leave.days}d</span>
-                      <Badge
-                        variant={leave.status === "APPROVED" ? "success" : leave.status === "REJECTED" ? "destructive" : "secondary"}
-                        className="text-[10px] px-1.5 py-0"
-                      >
+                      <Badge variant={leave.status === "APPROVED" ? "success" : leave.status === "REJECTED" ? "destructive" : "secondary"} className="text-[10px] px-1.5 py-0">
                         {leave.status}
                       </Badge>
                     </div>
@@ -442,7 +449,12 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
         </div>
 
         {/* ── RIGHT: Feed + Social ── */}
-        <div className="lg:col-span-3 space-y-4">
+        <div className="lg:col-span-3 space-y-4 order-1 lg:order-none">
+
+          {/* Time widget — mobile only (inside right col so it's first on mobile) */}
+          <div className="lg:hidden">
+            <TimeWidget checkIn={checkIn} checkOut={checkOut} />
+          </div>
 
           {/* Post / Poll / Praise */}
           <PostFeed />
@@ -501,9 +513,7 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-gray-900">{formatCurrency(slip.netSalary)}</p>
-                      <Badge variant={slip.status === "PUBLISHED" ? "success" : "secondary"} className="text-[10px]">
-                        {slip.status}
-                      </Badge>
+                      <Badge variant={slip.status === "PUBLISHED" ? "success" : "secondary"} className="text-[10px]">{slip.status}</Badge>
                     </div>
                   </div>
                 ))}
@@ -563,9 +573,9 @@ function BirthdaysSection({
       {/* static header showing all three counts */}
       <div className="flex border-b border-gray-100">
         {tabs.map((t) => (
-          <div key={t.key} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-3 text-xs font-medium text-gray-600 border-r last:border-r-0 border-gray-100">
-            <t.icon className={`w-3.5 h-3.5 ${t.color}`} />
-            <span>{t.label}</span>
+          <div key={t.key} className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 px-2 py-2.5 text-xs font-medium text-gray-600 border-r last:border-r-0 border-gray-100">
+            <t.icon className={`w-3.5 h-3.5 shrink-0 ${t.color}`} />
+            <span className="text-center leading-tight text-[10px] sm:text-xs">{t.label}</span>
           </div>
         ))}
       </div>
