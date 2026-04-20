@@ -61,7 +61,9 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
   async function loadEmployees() {
     const res = await fetch("/api/employees");
     const data = await res.json();
-    setAllEmployees((data.employees ?? []).filter((e: Employee) => e.id !== myEmployeeId));
+    // API returns a plain array (not { employees: [...] })
+    const list: Employee[] = Array.isArray(data) ? data : (data.employees ?? []);
+    setAllEmployees(list.filter((e: Employee) => e.id !== myEmployeeId));
   }
 
   useEffect(() => {
@@ -91,7 +93,8 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
     // Add all employees to the channel
     const empRes = await fetch("/api/employees");
     const empData = await empRes.json();
-    const allIds = (empData.employees ?? []).map((e: Employee) => e.id).filter((id: string) => id !== myEmployeeId);
+    const empList: Employee[] = Array.isArray(empData) ? empData : (empData.employees ?? []);
+    const allIds = empList.map((e: Employee) => e.id).filter((id: string) => id !== myEmployeeId);
 
     const res = await fetch("/api/chat/rooms", {
       method: "POST",
@@ -141,7 +144,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#1E1B2E] text-white w-72 shrink-0">
+    <div className="flex flex-col h-full bg-[#1E1B2E] text-white w-full lg:w-72 shrink-0">
       {/* Header */}
       <div className="px-4 py-4 border-b border-white/10">
         <div className="flex items-center justify-between mb-3">
@@ -326,8 +329,8 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
                       className="w-full bg-white/10 text-xs text-white placeholder-gray-500 pl-7 pr-3 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-400"
                     />
                   </div>
-                  <div className="max-h-40 overflow-y-auto space-y-0.5">
-                    {filteredEmployees.slice(0, 10).map((emp) => (
+                  <div className="max-h-52 overflow-y-auto space-y-0.5">
+                    {filteredEmployees.map((emp) => (
                       <button
                         key={emp.id}
                         onClick={() => startDM(emp.id)}

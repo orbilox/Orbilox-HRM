@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Send, Hash, Loader2, Trash2, Reply, MoreHorizontal,
-  Smile, Users, ChevronDown, MessageSquare
+  Send, Hash, Loader2, Trash2, Reply,
+  Users, ChevronDown, MessageSquare, ArrowLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +37,7 @@ interface Props {
   room: Room;
   myEmployeeId: string;
   myName: string;
+  onBack?: () => void;
 }
 
 const AVATAR_COLORS = ["bg-purple-600","bg-blue-600","bg-green-600","bg-pink-600","bg-orange-500","bg-teal-600","bg-indigo-600"];
@@ -71,7 +72,7 @@ function isSameDay(a: string, b: string) {
 
 const REACTIONS = ["👍","❤️","😂","🎉","🔥","👏","😮","🙏"];
 
-export default function ChatWindow({ room, myEmployeeId, myName }: Props) {
+export default function ChatWindow({ room, myEmployeeId, myName, onBack }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
@@ -211,8 +212,17 @@ export default function ChatWindow({ room, myEmployeeId, myName }: Props) {
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 bg-white shadow-sm shrink-0">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center justify-between px-3 lg:px-5 py-3 lg:py-3.5 border-b border-gray-100 bg-white shadow-sm shrink-0">
+        <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+          {/* Back button — mobile only */}
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="lg:hidden p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 active:bg-gray-200 shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
           {room.type === "DIRECT" ? (
             <>
               {(() => {
@@ -419,7 +429,7 @@ export default function ChatWindow({ room, myEmployeeId, myName }: Props) {
           )}
 
           {/* Input area */}
-          <div className={cn("px-4 pb-4", replyTo ? "pt-0" : "pt-2")}>
+          <div className={cn("px-3 lg:px-4 pb-3 lg:pb-4", replyTo ? "pt-0" : "pt-2")}>
             <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2 focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100 transition-all">
               <textarea
                 ref={inputRef}
@@ -430,21 +440,27 @@ export default function ChatWindow({ room, myEmployeeId, myName }: Props) {
                   e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                  // Only send on Enter on desktop (non-mobile)
+                  if (e.key === "Enter" && !e.shiftKey && window.innerWidth >= 1024) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
                 }}
                 placeholder={`Message ${roomDisplayName}...`}
                 rows={1}
                 className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 resize-none focus:outline-none max-h-28 leading-relaxed"
+                style={{ touchAction: "manipulation" }}
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || sending}
-                className="w-8 h-8 flex items-center justify-center bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-40 transition-colors shrink-0"
+                className="w-9 h-9 flex items-center justify-center bg-purple-600 text-white rounded-xl hover:bg-purple-700 active:bg-purple-800 disabled:opacity-40 transition-colors shrink-0"
+                style={{ touchAction: "manipulation" }}
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
-            <p className="text-[10px] text-gray-400 mt-1 px-1">Press Enter to send · Shift+Enter for new line</p>
+            <p className="hidden lg:block text-[10px] text-gray-400 mt-1 px-1">Press Enter to send · Shift+Enter for new line</p>
           </div>
         </div>
 

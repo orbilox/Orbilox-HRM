@@ -28,7 +28,7 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
   useEffect(() => {
     fetch("/api/chat/seed", { method: "POST" })
       .then(() => setSeeded(true))
-      .catch(() => setSeeded(true)); // still show UI even if seed fails
+      .catch(() => setSeeded(true));
   }, []);
 
   if (!seeded) {
@@ -44,20 +44,31 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
 
   return (
     <div className="flex h-full overflow-hidden">
-      <ChatSidebar
-        myEmployeeId={myEmployeeId}
-        myName={myName}
-        selectedRoomId={selectedRoom?.id ?? null}
-        onSelectRoom={(room) => setSelectedRoom(room as Room)}
-      />
+      {/* Sidebar: full screen on mobile when no room selected, w-72 on desktop always */}
+      <div className={`
+        h-full flex-col bg-[#1E1B2E]
+        ${selectedRoom ? "hidden lg:flex lg:w-72 lg:shrink-0" : "flex w-full lg:w-72 lg:shrink-0"}
+      `}>
+        <ChatSidebar
+          myEmployeeId={myEmployeeId}
+          myName={myName}
+          selectedRoomId={selectedRoom?.id ?? null}
+          onSelectRoom={(room) => setSelectedRoom(room as Room)}
+        />
+      </div>
 
-      <div className="flex-1 overflow-hidden relative">
+      {/* Chat window: hidden on mobile when no room, full screen on mobile when room selected */}
+      <div className={`
+        flex-1 overflow-hidden relative
+        ${selectedRoom ? "flex flex-col" : "hidden lg:flex lg:flex-col"}
+      `}>
         {selectedRoom ? (
           <ChatWindow
             key={selectedRoom.id}
             room={selectedRoom}
             myEmployeeId={myEmployeeId}
             myName={myName}
+            onBack={() => setSelectedRoom(null)}
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full bg-gray-50 text-center px-6">
@@ -66,7 +77,7 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
             </div>
             <h2 className="text-xl font-bold text-gray-800">Welcome to Team Chat</h2>
             <p className="text-gray-400 mt-2 max-w-xs text-sm">
-              Select a channel or direct message from the sidebar to start chatting with your team
+              Select a channel or direct message from the sidebar to start chatting
             </p>
             <div className="mt-6 grid grid-cols-3 gap-3 text-center">
               {[

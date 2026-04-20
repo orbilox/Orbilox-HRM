@@ -29,7 +29,7 @@ export default async function ChatPage() {
     : (session.user.name ?? session.user.email ?? "Me");
 
   return (
-    <div style={{ height: "calc(100vh - 0px)" }} className="overflow-hidden flex flex-col">
+    <div className="h-full overflow-hidden flex flex-col">
       <ChatApp myEmployeeId={employeeId} myName={myName} />
     </div>
   );
