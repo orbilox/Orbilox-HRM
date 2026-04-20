@@ -9,18 +9,25 @@ export async function POST() {
     if (!session?.user?.employeeId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const employeeId = session.user.employeeId;
 
-    // Get all active employees
+    const defaults = [
+      { name: "general", description: "Company-wide announcements and conversations" },
+      { name: "random",  description: "Non-work banter and fun stuff" },
+    ];
+
+    // Fast-path: if both channels already exist, return instantly — no DB writes
+    const existingCount = await db.chatRoom.count({
+      where: { name: { in: ["general", "random"] }, type: "CHANNEL" },
+    });
+    if (existingCount >= defaults.length) {
+      return NextResponse.json({ ok: true });
+    }
+
+    // First-time only: fetch employees and create missing channels
     const employees = await db.employee.findMany({
       where: { status: "ACTIVE" },
       select: { id: true },
     });
     const allIds = employees.map((e) => e.id);
-
-    // Create default channels if they don't exist
-    const defaults = [
-      { name: "general", description: "Company-wide announcements and conversations" },
-      { name: "random", description: "Non-work banter and fun stuff" },
-    ];
 
     for (const ch of defaults) {
       const existing = await db.chatRoom.findFirst({ where: { name: ch.name, type: "CHANNEL" } });
@@ -34,15 +41,6 @@ export async function POST() {
             participants: { create: allIds.map((id) => ({ employeeId: id })) },
           },
         });
-      } else {
-        // Add any employees not yet in the channel
-        for (const id of allIds) {
-          await db.chatParticipant.upsert({
-            where: { roomId_employeeId: { roomId: existing.id, employeeId: id } },
-            create: { roomId: existing.id, employeeId: id },
-            update: {},
-          });
-        }
       }
     }
 

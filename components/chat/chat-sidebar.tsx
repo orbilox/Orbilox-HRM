@@ -149,7 +149,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-[#1E1B2E] text-white w-full lg:w-72 lg:flex-none shrink-0">
+    <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-[#1E1B2E] text-white overflow-hidden">
       {/* Header */}
       <div className="px-4 py-4 border-b border-white/10">
         <div className="flex items-center justify-between mb-3">

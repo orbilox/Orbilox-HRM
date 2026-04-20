@@ -22,33 +22,25 @@ interface Props {
 
 export default function ChatApp({ myEmployeeId, myName }: Props) {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [seeded, setSeeded] = useState(false);
 
-  // Seed default channels on first load
+  // Fire seed in background — never blocks the UI
   useEffect(() => {
-    fetch("/api/chat/seed", { method: "POST" })
-      .then(() => setSeeded(true))
-      .catch(() => setSeeded(true));
+    fetch("/api/chat/seed", { method: "POST" }).catch(() => {});
   }, []);
-
-  if (!seeded) {
-    return (
-      <div className="flex items-center justify-center h-full bg-[#1E1B2E]">
-        <div className="text-center text-white">
-          <MessageSquare className="w-8 h-8 animate-pulse text-purple-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-400">Setting up chat...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
-      {/* Sidebar: full screen on mobile when no room selected, w-72 on desktop always */}
-      <div className={`
-        h-full flex-col bg-[#1E1B2E]
-        ${selectedRoom ? "hidden lg:flex lg:w-72 lg:shrink-0" : "flex w-full lg:w-72 lg:shrink-0"}
-      `}>
+
+      {/* ── Sidebar ──────────────────────────────────────────
+          Mobile: full-screen when no room selected, hidden when room open
+          Desktop: always visible, fixed w-72
+      ──────────────────────────────────────────────────── */}
+      <div className={[
+        "flex flex-col bg-[#1E1B2E] flex-shrink-0 overflow-hidden",
+        selectedRoom
+          ? "hidden lg:flex lg:w-72"
+          : "flex w-full lg:w-72",
+      ].join(" ")}>
         <ChatSidebar
           myEmployeeId={myEmployeeId}
           myName={myName}
@@ -57,11 +49,14 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
         />
       </div>
 
-      {/* Chat window: hidden on mobile when no room, full screen on mobile when room selected */}
-      <div className={`
-        flex-1 overflow-hidden relative
-        ${selectedRoom ? "flex flex-col" : "hidden lg:flex lg:flex-col"}
-      `}>
+      {/* ── Chat window ──────────────────────────────────────
+          Mobile: full-screen when room selected, hidden when no room
+          Desktop: always visible, takes remaining width
+      ──────────────────────────────────────────────────── */}
+      <div className={[
+        "flex-1 min-w-0 flex flex-col overflow-hidden",
+        selectedRoom ? "flex" : "hidden lg:flex",
+      ].join(" ")}>
         {selectedRoom ? (
           <ChatWindow
             key={selectedRoom.id}
@@ -71,6 +66,7 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
             onBack={() => setSelectedRoom(null)}
           />
         ) : (
+          /* Desktop empty state */
           <div className="flex flex-col items-center justify-center h-full bg-gray-50 text-center px-6">
             <div className="w-20 h-20 rounded-3xl bg-purple-100 flex items-center justify-center mb-5">
               <MessageSquare className="w-10 h-10 text-purple-500" />
