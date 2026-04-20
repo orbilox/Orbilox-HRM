@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, UserCircle, Calendar, Target, Landmark,
   FileText, MessageSquare, ShieldCheck, Bell,
-  Users, Clock, DollarSign, Briefcase, FileSearch, Settings
+  Users, Clock, DollarSign, Briefcase, FileSearch, Settings, LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -48,9 +49,9 @@ export default function MobileNav({
   const tabs = isAdmin ? adminTabs : employeeTabs;
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex items-stretch">
       {/* Scrollable strip */}
-      <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth">
+      <div className="flex-1 flex overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth">
         {tabs.map((tab) => {
           const active =
             pathname === tab.href ||
@@ -81,8 +82,17 @@ export default function MobileNav({
         })}
       </div>
 
-      {/* Right fade hint */}
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/90 to-transparent" />
+      {/* Fade hint before sign-out */}
+      <div className="pointer-events-none absolute right-[56px] top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent" />
+
+      {/* Sign Out — always visible, pinned right */}
+      <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="flex-none flex flex-col items-center justify-center py-2.5 gap-0.5 px-3 border-l border-gray-100 text-gray-400 hover:text-red-500 transition-colors bg-white"
+      >
+        <LogOut className="w-5 h-5" />
+        <span className="text-[9px] font-semibold tracking-wide">Logout</span>
+      </button>
     </nav>
   );
 }
