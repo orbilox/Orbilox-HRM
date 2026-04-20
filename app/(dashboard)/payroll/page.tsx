@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency , nameInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -426,7 +426,7 @@ export default async function PayrollPage({
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {slip.employee.firstName[0]}{slip.employee.lastName[0]}
+                            {nameInitials(slip.employee.firstName, slip.employee.lastName)}
                           </div>
                           <div>
                             <div className="font-medium text-gray-900">{slip.employee.firstName} {slip.employee.lastName}</div>

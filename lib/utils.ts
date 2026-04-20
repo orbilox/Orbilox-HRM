@@ -24,10 +24,18 @@ export function formatDate(date: Date | string) {
 export function getInitials(name: string) {
   return name
     .split(" ")
-    .map((n) => n[0])
+    .filter(Boolean)
+    .map((n) => n[0] ?? "")
     .join("")
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2) || "?";
+}
+
+/** Safe initials from separate first/last name fields — handles empty lastName */
+export function nameInitials(firstName?: string | null, lastName?: string | null) {
+  const a = firstName?.[0] ?? "";
+  const b = lastName?.[0] ?? "";
+  return (a + b).toUpperCase() || (firstName?.[0]?.toUpperCase() ?? "?");
 }
 
 export function generateEmployeeCode(index: number) {

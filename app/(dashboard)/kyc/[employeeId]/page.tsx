@@ -1,3 +1,4 @@
+import { nameInitials } from "@/lib/utils";
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
@@ -107,7 +108,7 @@ export default async function KYCReviewPage({
             <CardContent className="p-5">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 rounded-2xl bg-purple-600 flex items-center justify-center text-white text-xl font-bold shrink-0">
-                  {employee.firstName[0]}{employee.lastName[0]}
+                  {nameInitials(employee.firstName, employee.lastName)}
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">{employee.firstName} {employee.lastName}</p>

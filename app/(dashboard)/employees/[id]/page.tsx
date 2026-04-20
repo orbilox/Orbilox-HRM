@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { formatDate, formatCurrency } from "@/lib/utils";
+import { formatDate, formatCurrency , nameInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -50,7 +50,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
-              {employee.firstName[0]}{employee.lastName[0]}
+              {nameInitials(employee.firstName, employee.lastName)}
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">{employee.firstName} {employee.lastName}</h1>

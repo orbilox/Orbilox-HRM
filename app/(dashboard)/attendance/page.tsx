@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
+import { formatDate , nameInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, UserCheck, UserX, AlarmClock, Plane, CalendarDays, TrendingUp, LogIn, LogOut } from "lucide-react";
@@ -318,7 +318,7 @@ export default async function AttendancePage({
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {record.employee.firstName[0]}{record.employee.lastName[0]}
+                            {nameInitials(record.employee.firstName, record.employee.lastName)}
                           </div>
                           <div>
                             <div className="font-medium text-gray-900">{record.employee.firstName} {record.employee.lastName}</div>

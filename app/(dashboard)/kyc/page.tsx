@@ -1,3 +1,4 @@
+import { nameInitials } from "@/lib/utils";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
@@ -120,7 +121,7 @@ export default async function KYCPage() {
                         <td className="py-3 pr-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                              {emp.firstName[0]}{emp.lastName[0]}
+                              {nameInitials(emp.firstName, emp.lastName)}
                             </div>
                             <div>
                               <div className="font-medium text-gray-900">{emp.firstName} {emp.lastName}</div>

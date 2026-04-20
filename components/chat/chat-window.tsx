@@ -46,6 +46,11 @@ function avatarColor(str: string) {
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
+function initials(firstName: string, lastName?: string) {
+  const a = firstName?.[0] ?? "";
+  const b = lastName?.[0] ?? "";
+  return (a + b).toUpperCase() || "?";
+}
 
 function formatTime(iso: string) {
   const d = new Date(iso);
@@ -210,7 +215,7 @@ export default function ChatWindow({ room, myEmployeeId, myName, onBack }: Props
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col flex-1 min-h-0 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between px-3 lg:px-5 py-3 lg:py-3.5 border-b border-gray-100 bg-white shadow-sm shrink-0">
         <div className="flex items-center gap-2 lg:gap-3 min-w-0">
@@ -229,7 +234,7 @@ export default function ChatWindow({ room, myEmployeeId, myName, onBack }: Props
                 const o = getDMOther();
                 return o ? (
                   <div className={`w-9 h-9 rounded-full ${avatarColor(`${o.firstName} ${o.lastName}`)} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                    {o.firstName[0]}{o.lastName[0]}
+                    {initials(o.firstName, o.lastName)}
                   </div>
                 ) : null;
               })()}
@@ -330,7 +335,7 @@ export default function ChatWindow({ room, myEmployeeId, myName, onBack }: Props
                       <div className="w-9 shrink-0 pt-0.5">
                         {showAvatar ? (
                           <div className={`w-9 h-9 rounded-full ${avatarColor(senderName)} flex items-center justify-center text-white text-sm font-bold`}>
-                            {msg.sender.firstName[0]}{msg.sender.lastName[0]}
+                            {initials(msg.sender.firstName, msg.sender.lastName)}
                           </div>
                         ) : (
                           <span className="text-[10px] text-gray-300 invisible group-hover:visible select-none pt-1 block text-center">
@@ -476,7 +481,7 @@ export default function ChatWindow({ room, myEmployeeId, myName, onBack }: Props
                 return (
                   <div key={p.employeeId} className="flex items-center gap-2.5 px-3 py-2 hover:bg-gray-100 transition-colors">
                     <div className={`w-7 h-7 rounded-full ${avatarColor(name)} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
-                      {p.employee.firstName[0]}{p.employee.lastName[0]}
+                      {initials(p.employee.firstName, p.employee.lastName)}
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-gray-800 truncate">{name}</p>

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
+import { formatDate , nameInitials } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Search, ExternalLink } from "lucide-react";
@@ -190,7 +190,7 @@ export default async function DocumentsPage({
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {doc.employee.firstName[0]}{doc.employee.lastName[0]}
+                            {nameInitials(doc.employee.firstName, doc.employee.lastName)}
                           </div>
                           <div>
                             <div className="font-medium text-gray-900">{doc.employee.firstName} {doc.employee.lastName}</div>

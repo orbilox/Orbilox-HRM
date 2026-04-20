@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
+import { formatDate , nameInitials } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -287,7 +287,7 @@ export default async function PerformancePage() {
                           <td className="py-3 pr-4">
                             <div className="flex items-center gap-2">
                               <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                {goal.employee.firstName[0]}{goal.employee.lastName[0]}
+                                {nameInitials(goal.employee.firstName, goal.employee.lastName)}
                               </div>
                               <span className="font-medium text-gray-900">{goal.employee.firstName} {goal.employee.lastName}</span>
                             </div>
@@ -342,7 +342,7 @@ export default async function PerformancePage() {
                             <td className="py-3 pr-4">
                               <div className="flex items-center gap-2">
                                 <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                  {review.employee.firstName[0]}{review.employee.lastName[0]}
+                                  {nameInitials(review.employee.firstName, review.employee.lastName)}
                                 </div>
                                 <span className="font-medium text-gray-900">{review.employee.firstName} {review.employee.lastName}</span>
                               </div>

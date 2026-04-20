@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
+import { formatDate , nameInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock, CheckCircle, XCircle, Filter, Calendar } from "lucide-react";
@@ -271,7 +271,7 @@ export default async function LeavesPage({
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {leave.employee.firstName[0]}{leave.employee.lastName[0]}
+                            {nameInitials(leave.employee.firstName, leave.employee.lastName)}
                           </div>
                           <div>
                             <div className="font-medium text-gray-900">{leave.employee.firstName} {leave.employee.lastName}</div>

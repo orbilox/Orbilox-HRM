@@ -43,7 +43,7 @@ export default function ChatApp({ myEmployeeId, myName }: Props) {
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Sidebar: full screen on mobile when no room selected, w-72 on desktop always */}
       <div className={`
         h-full flex-col bg-[#1E1B2E]

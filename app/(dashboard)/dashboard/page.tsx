@@ -6,7 +6,7 @@ import {
   Users, Clock, Calendar, DollarSign, TrendingUp, UserCheck,
   UserX, Briefcase, Cake, Award, UserPlus, Megaphone, MapPin,
 } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate , nameInitials } from "@/lib/utils";
 import TimeWidget from "@/components/dashboard/employee/time-widget";
 import HolidayCarousel from "@/components/dashboard/employee/holiday-carousel";
 import PostFeed from "@/components/dashboard/employee/post-feed";
@@ -213,7 +213,7 @@ async function AdminDashboard({ session }: { session: { user: { name?: string | 
                   {data.recentEmployees.map((emp) => (
                     <div key={emp.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                       <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                        {emp.firstName[0]}{emp.lastName[0]}
+                        {nameInitials(emp.firstName, emp.lastName)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm text-gray-900 truncate">{emp.firstName} {emp.lastName}</div>
@@ -409,13 +409,13 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
               ) : (
                 data.onLeaveToday.map((l) => {
                   const name = `${l.employee.firstName} ${l.employee.lastName}`;
-                  const short = `${l.employee.firstName[0]}${l.employee.lastName[0]}`;
+                  const short = nameInitials(l.employee.firstName, l.employee.lastName);
                   return (
                     <div key={l.id} className="flex flex-col items-center gap-1 shrink-0">
                       <div className="w-16 h-16 rounded-full bg-orange-400 flex items-center justify-center text-white font-bold text-lg">
                         {short}
                       </div>
-                      <span className="text-[10px] font-medium text-gray-700 text-center">{l.employee.firstName} {l.employee.lastName[0]}.</span>
+                      <span className="text-[10px] font-medium text-gray-700 text-center">{l.employee.firstName}{l.employee.lastName ? ` ${l.employee.lastName[0]}.` : ""}</span>
                       <span className="text-[9px] text-gray-400">Today</span>
                     </div>
                   );
@@ -470,7 +470,7 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
                 {data.upcomingBirthdays.slice(0, 3).map((b) => (
                   <div key={b.id} className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm shrink-0">
-                      {b.firstName[0]}{b.lastName[0]}
+                      {nameInitials(b.firstName, b.lastName)}
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-800">{b.firstName} {b.lastName}</p>

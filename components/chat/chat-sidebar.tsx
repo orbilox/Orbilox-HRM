@@ -127,7 +127,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
   function getDMInitials(room: Room) {
     const other = room.participants.find((p) => p.employeeId !== myEmployeeId);
     if (!other) return "?";
-    return `${other.employee.firstName[0]}${other.employee.lastName[0]}`;
+    return initials(other.employee.firstName, other.employee.lastName);
   }
 
   const filteredEmployees = allEmployees.filter((e) =>
@@ -142,9 +142,14 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
     for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
     return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
   }
+  function initials(firstName: string, lastName?: string) {
+    const a = firstName?.[0] ?? "";
+    const b = lastName?.[0] ?? "";
+    return (a + b).toUpperCase() || "?";
+  }
 
   return (
-    <div className="flex flex-col h-full bg-[#1E1B2E] text-white w-full lg:w-72 shrink-0">
+    <div className="flex flex-col flex-1 min-h-0 bg-[#1E1B2E] text-white w-full lg:w-72 lg:flex-none shrink-0">
       {/* Header */}
       <div className="px-4 py-4 border-b border-white/10">
         <div className="flex items-center justify-between mb-3">
@@ -338,7 +343,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
                         className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-xs text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                       >
                         <div className={`w-6 h-6 rounded-full ${avatarColor(`${emp.firstName} ${emp.lastName}`)} flex items-center justify-center text-[10px] font-bold shrink-0`}>
-                          {emp.firstName[0]}{emp.lastName[0]}
+                          {initials(emp.firstName, emp.lastName)}
                         </div>
                         <div className="flex-1 text-left min-w-0">
                           <div className="font-medium truncate">{emp.firstName} {emp.lastName}</div>
@@ -362,7 +367,7 @@ export default function ChatSidebar({ myEmployeeId, myName, selectedRoomId, onSe
       <div className="border-t border-white/10 px-4 py-3">
         <div className="flex items-center gap-2">
           <div className={`w-7 h-7 rounded-full ${avatarColor(myName)} flex items-center justify-center text-xs font-bold shrink-0`}>
-            {myName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+            {myName.split(" ").filter(Boolean).map((n) => n[0] ?? "").join("").slice(0, 2).toUpperCase() || "?"}
           </div>
           <div className="min-w-0">
             <p className="text-xs font-semibold text-white truncate">{myName}</p>
