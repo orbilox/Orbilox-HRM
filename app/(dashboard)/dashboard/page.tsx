@@ -321,7 +321,6 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
   const greeting = today.getHours() < 12 ? "morning" : today.getHours() < 17 ? "afternoon" : "evening";
 
   const firstName = session?.user?.name?.split(" ")[0] ?? "there";
-  const initials = (session?.user?.name ?? "U").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
   const hoursWorked = data.todayAttendance?.hoursWorked ?? 0;
 
   return (
@@ -331,19 +330,6 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
           MOBILE LAYOUT  (lg:hidden)
       ════════════════════════════════════════════════ */}
       <div className="lg:hidden flex flex-col bg-gray-100 min-h-full">
-
-        {/* ── Top Search Bar ── */}
-        <div className="bg-white px-4 py-3 flex items-center gap-3 shadow-sm sticky top-0 z-10">
-          <div className="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-            {initials}
-          </div>
-          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2">
-            <span className="text-gray-400 text-sm">Search your colleagues</span>
-          </div>
-          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-            <Users className="w-4 h-4 text-gray-500" />
-          </div>
-        </div>
 
         {/* ── Scrollable Content ── */}
         <div className="flex-1 overflow-y-auto space-y-3 p-4">
