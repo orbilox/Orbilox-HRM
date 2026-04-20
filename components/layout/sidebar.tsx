@@ -129,7 +129,7 @@ function AdminSidebar({ userRole, userName, userEmail }: SidebarProps) {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-lg">WorkNest</span>
+            <span className="font-bold text-lg">Orbilox</span>
           </div>
         )}
         {collapsed && (

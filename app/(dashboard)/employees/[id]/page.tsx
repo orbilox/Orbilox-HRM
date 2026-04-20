@@ -212,7 +212,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-purple-600" /> HRM Login Account
+                <KeyRound className="w-4 h-4 text-purple-600" /> Orbilox Login Account
               </CardTitle>
             </CardHeader>
             <CardContent>

@@ -21,9 +21,9 @@ const stats = [
 ];
 
 const testimonials = [
-  { name: "Priya Sharma", role: "HR Director, TechCorp", quote: "WorkNest transformed our HR processes. We reduced payroll processing time by 80%.", avatar: "PS" },
+  { name: "Priya Sharma", role: "HR Director, TechCorp", quote: "Orbilox transformed our HR processes. We reduced payroll processing time by 80%.", avatar: "PS" },
   { name: "Rahul Verma", role: "CEO, StartupXYZ", quote: "The best HR platform we've used. The attendance and leave management is seamless.", avatar: "RV" },
-  { name: "Anita Patel", role: "Operations Manager, RetailCo", quote: "Onboarding new employees is now a breeze. WorkNest is simply outstanding.", avatar: "AP" },
+  { name: "Anita Patel", role: "Operations Manager, RetailCo", quote: "Onboarding new employees is now a breeze. Orbilox is simply outstanding.", avatar: "AP" },
 ]; 
 
 export default function LandingPage() {
@@ -36,7 +36,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">WorkNest</span>
+            <span className="text-xl font-bold text-gray-900">Orbilox</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
             <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
@@ -60,7 +60,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center relative">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm mb-6">
             <Zap className="w-4 h-4 text-yellow-300" />
-            <span>India&apos;s smartest HRMS platform</span>
+            <span>India&apos;s smartest HR platform</span>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             HR Management<br />
@@ -102,7 +102,7 @@ export default function LandingPage() {
               Everything you need to manage your workforce
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              WorkNest brings all HR operations together in one intuitive platform.
+              Orbilox brings all HR operations together in one intuitive platform.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -119,13 +119,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why WorkNest */}
+      {/* Why Orbilox */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-                Why businesses choose <span className="text-blue-600">WorkNest</span>
+                Why businesses choose <span className="text-blue-600">Orbilox</span>
               </h2>
               <div className="space-y-4">
                 {[
@@ -203,11 +203,11 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to transform your HR?</h2>
           <p className="text-blue-100 text-lg mb-8">
-            Join hundreds of companies managing their workforce with WorkNest. 100% free, self-hosted.
+            Join hundreds of companies managing their workforce with Orbilox. 100% free, self-hosted.
           </p>
           <Link href="/login">
             <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 font-semibold px-10">
-              Access WorkNest <ChevronRight className="w-4 h-4 ml-1" />
+              Access Orbilox <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
@@ -222,10 +222,10 @@ export default function LandingPage() {
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-white font-bold text-lg">WorkNest</span>
+                <span className="text-white font-bold text-lg">Orbilox</span>
               </div>
               <p className="text-sm leading-relaxed">
-                India&apos;s most complete HRMS platform for modern businesses of all sizes.
+                India&apos;s most complete HR platform for modern businesses of all sizes.
               </p>
             </div>
             <div>
@@ -261,11 +261,11 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm">© 2025 WorkNest HRMS. All rights reserved.</p>
+            <p className="text-sm">© 2025 Orbilox HRM. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <Link href="/login">
                 <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white">
-                  Sign In to WorkNest
+                  Sign In to Orbilox
                 </Button>
               </Link>
             </div>

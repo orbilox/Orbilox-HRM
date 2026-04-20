@@ -358,7 +358,7 @@ export default function EmployeeForm({ departments, managers, employee }: Props)
               </label>
             </div>
             <p className="text-xs text-gray-400 mt-1">
-              Set the email and password the employee will use to log in to the HRM portal.
+              Set the email and password the employee will use to log in to the Orbilox portal.
             </p>
           </CardHeader>
           {createAccount && (

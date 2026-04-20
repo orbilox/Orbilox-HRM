@@ -46,14 +46,14 @@ export default function LoginPage() {
           <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
             <Building2 className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">WorkNest</span>
+          <span className="text-2xl font-bold text-gray-900">Orbilox</span>
         </div>
 
         <Card className="shadow-xl border-0">
           <CardHeader className="pb-4">
             <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
             <CardDescription className="text-center">
-              Sign in to your WorkNest account
+              Sign in to your Orbilox account
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -109,10 +109,10 @@ export default function LoginPage() {
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
               <p className="text-xs font-semibold text-blue-700 mb-2">Demo Credentials</p>
               <div className="space-y-1 text-xs text-blue-600">
-                <p><span className="font-medium">Admin:</span> admin@worknest.com / admin123</p>
-                <p><span className="font-medium">HR:</span> hr@worknest.com / hr123</p>
-                <p><span className="font-medium">Manager:</span> manager@worknest.com / manager123</p>
-                <p><span className="font-medium">Employee:</span> emp@worknest.com / emp123</p>
+                <p><span className="font-medium">Admin:</span> admin@orbilox.com / admin123</p>
+                <p><span className="font-medium">HR:</span> hr@orbilox.com / hr123</p>
+                <p><span className="font-medium">Manager:</span> manager@orbilox.com / manager123</p>
+                <p><span className="font-medium">Employee:</span> emp@orbilox.com / emp123</p>
               </div>
             </div>
           </CardContent>

@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "WorkNest HRMS – Smart HR Management",
+  title: "Orbilox HRM – Smart HR Management",
   description: "Complete HR management platform for modern businesses",
 };
 

@@ -12,9 +12,9 @@ async function main() {
     update: {},
     create: {
       id: "company-1",
-      name: "WorkNest Technologies Pvt. Ltd.",
+      name: "Orbilox Technologies Pvt. Ltd.",
       industry: "Technology",
-      email: "hr@worknest.com",
+      email: "hr@orbilox.com",
       phone: "+91 98765 43210",
       address: "123 Tech Park, Sector 5",
       city: "Bengaluru",
@@ -66,14 +66,14 @@ async function main() {
 
   // Employees
   const empData = [
-    { code: "EMP0001", first: "Rajesh", last: "Kumar", email: "rajesh.kumar@worknest.com", designation: "CTO", dept: eng.id, basic: 150000, type: "FULL_TIME" },
-    { code: "EMP0002", first: "Priya", last: "Sharma", email: "priya.sharma@worknest.com", designation: "HR Manager", dept: hr.id, basic: 80000, type: "FULL_TIME" },
-    { code: "EMP0003", first: "Arjun", last: "Mehta", email: "arjun.mehta@worknest.com", designation: "Senior Engineer", dept: eng.id, basic: 120000, type: "FULL_TIME" },
-    { code: "EMP0004", first: "Sneha", last: "Patel", email: "sneha.patel@worknest.com", designation: "Sales Manager", dept: sales.id, basic: 90000, type: "FULL_TIME" },
-    { code: "EMP0005", first: "Vikram", last: "Singh", email: "vikram.singh@worknest.com", designation: "Marketing Lead", dept: marketing.id, basic: 75000, type: "FULL_TIME" },
-    { code: "EMP0006", first: "Ananya", last: "Reddy", email: "ananya.reddy@worknest.com", designation: "Software Engineer", dept: eng.id, basic: 85000, type: "FULL_TIME" },
-    { code: "EMP0007", first: "Rohan", last: "Verma", email: "rohan.verma@worknest.com", designation: "Finance Analyst", dept: finance.id, basic: 65000, type: "FULL_TIME" },
-    { code: "EMP0008", first: "Meera", last: "Nair", email: "meera.nair@worknest.com", designation: "Operations Manager", dept: ops.id, basic: 70000, type: "FULL_TIME" },
+    { code: "EMP0001", first: "Rajesh", last: "Kumar", email: "rajesh.kumar@orbilox.com", designation: "CTO", dept: eng.id, basic: 150000, type: "FULL_TIME" },
+    { code: "EMP0002", first: "Priya", last: "Sharma", email: "priya.sharma@orbilox.com", designation: "HR Manager", dept: hr.id, basic: 80000, type: "FULL_TIME" },
+    { code: "EMP0003", first: "Arjun", last: "Mehta", email: "arjun.mehta@orbilox.com", designation: "Senior Engineer", dept: eng.id, basic: 120000, type: "FULL_TIME" },
+    { code: "EMP0004", first: "Sneha", last: "Patel", email: "sneha.patel@orbilox.com", designation: "Sales Manager", dept: sales.id, basic: 90000, type: "FULL_TIME" },
+    { code: "EMP0005", first: "Vikram", last: "Singh", email: "vikram.singh@orbilox.com", designation: "Marketing Lead", dept: marketing.id, basic: 75000, type: "FULL_TIME" },
+    { code: "EMP0006", first: "Ananya", last: "Reddy", email: "ananya.reddy@orbilox.com", designation: "Software Engineer", dept: eng.id, basic: 85000, type: "FULL_TIME" },
+    { code: "EMP0007", first: "Rohan", last: "Verma", email: "rohan.verma@orbilox.com", designation: "Finance Analyst", dept: finance.id, basic: 65000, type: "FULL_TIME" },
+    { code: "EMP0008", first: "Meera", last: "Nair", email: "meera.nair@orbilox.com", designation: "Operations Manager", dept: ops.id, basic: 70000, type: "FULL_TIME" },
   ];
 
   const createdEmployees: Record<string, string> = {};
@@ -118,10 +118,10 @@ async function main() {
 
   // Users
   const userAccounts = [
-    { email: "admin@worknest.com", password: "admin123", role: "ADMIN", empEmail: null },
-    { email: "hr@worknest.com", password: "hr123", role: "HR", empEmail: "priya.sharma@worknest.com" },
-    { email: "manager@worknest.com", password: "manager123", role: "MANAGER", empEmail: "rajesh.kumar@worknest.com" },
-    { email: "emp@worknest.com", password: "emp123", role: "EMPLOYEE", empEmail: "arjun.mehta@worknest.com" },
+    { email: "admin@orbilox.com", password: "admin123", role: "ADMIN", empEmail: null },
+    { email: "hr@orbilox.com", password: "hr123", role: "HR", empEmail: "priya.sharma@orbilox.com" },
+    { email: "manager@orbilox.com", password: "manager123", role: "MANAGER", empEmail: "rajesh.kumar@orbilox.com" },
+    { email: "emp@orbilox.com", password: "emp123", role: "EMPLOYEE", empEmail: "arjun.mehta@orbilox.com" },
   ];
 
   for (const u of userAccounts) {
@@ -225,9 +225,9 @@ async function main() {
 
   // Announcements
   const announcements = [
-    { title: "Welcome to WorkNest HRMS!", content: "We are excited to launch our new HR management platform. All employee data has been migrated. Please update your profile and verify your details.", priority: "HIGH", createdBy: "admin@worknest.com" },
-    { title: "Q4 Performance Reviews Starting", content: "Annual performance reviews for Q4 will begin next week. All managers are requested to schedule 1:1 meetings with their team members by end of this month.", priority: "NORMAL", createdBy: "hr@worknest.com" },
-    { title: "Office Holiday — Diwali", content: "The office will be closed for Diwali celebrations. Normal operations resume the following Monday. Have a safe and happy Diwali!", priority: "NORMAL", createdBy: "admin@worknest.com" },
+    { title: "Welcome to Orbilox HRM!", content: "We are excited to launch our new HR management platform. All employee data has been migrated. Please update your profile and verify your details.", priority: "HIGH", createdBy: "admin@orbilox.com" },
+    { title: "Q4 Performance Reviews Starting", content: "Annual performance reviews for Q4 will begin next week. All managers are requested to schedule 1:1 meetings with their team members by end of this month.", priority: "NORMAL", createdBy: "hr@orbilox.com" },
+    { title: "Office Holiday — Diwali", content: "The office will be closed for Diwali celebrations. Normal operations resume the following Monday. Have a safe and happy Diwali!", priority: "NORMAL", createdBy: "admin@orbilox.com" },
   ];
 
   for (const ann of announcements) {
@@ -237,10 +237,10 @@ async function main() {
 
   // Goals
   const goalData = [
-    { empEmail: "arjun.mehta@worknest.com", title: "Complete AWS Certification", category: "LEARNING", progress: 65, status: "IN_PROGRESS" },
-    { empEmail: "priya.sharma@worknest.com", title: "Reduce Time-to-Hire by 20%", category: "PERFORMANCE", progress: 45, status: "IN_PROGRESS" },
-    { empEmail: "sneha.patel@worknest.com", title: "Achieve Q4 Sales Target", category: "PERFORMANCE", progress: 80, status: "IN_PROGRESS" },
-    { empEmail: "ananya.reddy@worknest.com", title: "Launch Mobile App Feature", category: "PERFORMANCE", progress: 100, status: "COMPLETED" },
+    { empEmail: "arjun.mehta@orbilox.com", title: "Complete AWS Certification", category: "LEARNING", progress: 65, status: "IN_PROGRESS" },
+    { empEmail: "priya.sharma@orbilox.com", title: "Reduce Time-to-Hire by 20%", category: "PERFORMANCE", progress: 45, status: "IN_PROGRESS" },
+    { empEmail: "sneha.patel@orbilox.com", title: "Achieve Q4 Sales Target", category: "PERFORMANCE", progress: 80, status: "IN_PROGRESS" },
+    { empEmail: "ananya.reddy@orbilox.com", title: "Launch Mobile App Feature", category: "PERFORMANCE", progress: 100, status: "COMPLETED" },
   ];
 
   for (const g of goalData) {
@@ -265,10 +265,10 @@ async function main() {
 
   console.log("✅ Seed complete!");
   console.log("\n📋 Demo Login Credentials:");
-  console.log("  Admin:    admin@worknest.com / admin123");
-  console.log("  HR:       hr@worknest.com / hr123");
-  console.log("  Manager:  manager@worknest.com / manager123");
-  console.log("  Employee: emp@worknest.com / emp123");
+  console.log("  Admin:    admin@orbilox.com / admin123");
+  console.log("  HR:       hr@orbilox.com / hr123");
+  console.log("  Manager:  manager@orbilox.com / manager123");
+  console.log("  Employee: emp@orbilox.com / emp123");
   console.log("\n🚀 Run: npm run dev");
 }
 

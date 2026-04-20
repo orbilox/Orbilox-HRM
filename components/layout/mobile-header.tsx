@@ -32,7 +32,7 @@ export default function MobileHeader({ userName, userRole }: Props) {
   const title =
     Object.entries(PAGE_TITLES).find(([key]) =>
       pathname === key || pathname.startsWith(key + "/")
-    )?.[1] ?? "WorkNest";
+    )?.[1] ?? "Orbilox";
 
   const parts = userName.trim().split(" ").filter(Boolean);
   const avatarInitials =
