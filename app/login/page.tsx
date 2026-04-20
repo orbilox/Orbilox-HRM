@@ -106,15 +106,7 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-xs font-semibold text-blue-700 mb-2">Demo Credentials</p>
-              <div className="space-y-1 text-xs text-blue-600">
-                <p><span className="font-medium">Admin:</span> admin@orbilox.com / admin123</p>
-                <p><span className="font-medium">HR:</span> hr@orbilox.com / hr123</p>
-                <p><span className="font-medium">Manager:</span> manager@orbilox.com / manager123</p>
-                <p><span className="font-medium">Employee:</span> emp@orbilox.com / emp123</p>
-              </div>
-            </div>
+
           </CardContent>
         </Card>
 
