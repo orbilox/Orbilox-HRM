@@ -63,3 +63,23 @@
 /* Hide scrollbar for mobile nav carousel */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Eliminate 300ms tap delay on all interactive elements */
+a, button, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
+}
+
+/* Safe area support for mobile (iPhone notch / home bar) */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+
+/* Dynamic viewport height support */
+.h-dvh { height: 100dvh; }
+.min-h-dvh { min-height: 100dvh; }
+
+/* Mobile bottom nav padding — leaves room for nav bar + iPhone home bar */
+@media (max-width: 1023px) {
+  .mobile-scroll-padding {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}

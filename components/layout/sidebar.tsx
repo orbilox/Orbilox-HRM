@@ -58,7 +58,7 @@ function EmployeeSidebar({ userName, userEmail }: { userName: string; userEmail:
     .toUpperCase();
 
   return (
-    <aside className="hidden md:flex flex-col bg-[#1E1B2E] text-white w-[72px] shrink-0">
+    <aside className="hidden lg:flex flex-col bg-[#1E1B2E] text-white w-[72px] shrink-0">
       {/* Logo */}
       <div className="flex items-center justify-center h-14 border-b border-white/10">
         <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center shrink-0">
@@ -118,7 +118,7 @@ function AdminSidebar({ userRole, userName, userEmail }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col bg-gray-900 text-white transition-all duration-300 shrink-0",
+        "hidden lg:flex flex-col bg-gray-900 text-white transition-all duration-300 shrink-0",
         collapsed ? "w-16" : "w-64"
       )}
     >

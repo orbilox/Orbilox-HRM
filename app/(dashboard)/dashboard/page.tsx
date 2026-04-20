@@ -325,12 +325,12 @@ async function EmployeeDashboard({ session }: { session: { user: { name?: string
   const hoursWorked = data.todayAttendance?.hoursWorked ?? 0;
 
   return (
-    <div className="flex flex-col min-h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-gray-50">
 
       {/* ════════════════════════════════════════════════
           MOBILE LAYOUT  (lg:hidden)
       ════════════════════════════════════════════════ */}
-      <div className="lg:hidden flex flex-col bg-gray-100 min-h-screen">
+      <div className="lg:hidden flex flex-col bg-gray-100 min-h-full">
 
         {/* ── Top Search Bar ── */}
         <div className="bg-white px-4 py-3 flex items-center gap-3 shadow-sm sticky top-0 z-10">
