@@ -80,6 +80,6 @@ a, button, [role="button"], input, select, textarea, label {
 /* Mobile bottom nav padding — leaves room for nav bar + iPhone home bar */
 @media (max-width: 1023px) {
   .mobile-scroll-padding {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
