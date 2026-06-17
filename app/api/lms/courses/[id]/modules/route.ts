@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -11,16 +11,17 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const { id } = await params;
   const body = await req.json();
   const { title, description, tasks } = body;
 
   if (!title) return NextResponse.json({ error: "Title required" }, { status: 400 });
 
-  const existing = await db.learningModule.count({ where: { courseId: params.id } });
+  const existing = await db.learningModule.count({ where: { courseId: id } });
 
   const module = await db.learningModule.create({
     data: {
-      courseId: params.id,
+      courseId: id,
       title,
       description: description || null,
       order: existing,
@@ -43,11 +44,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   return NextResponse.json(module, { status: 201 });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const { moduleId } = await req.json();
-  await db.learningModule.delete({ where: { id: moduleId, courseId: params.id } });
+  await db.learningModule.delete({ where: { id: moduleId, courseId: id } });
   return NextResponse.json({ ok: true });
 }
