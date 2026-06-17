@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -89,6 +89,8 @@ model Employee {
   kycDocuments    KYCDocument[]
   chatParticipant ChatParticipant[]
   chatMessages    ChatMessage[]
+  enrollments     CourseEnrollment[]
+  taskCompletions TaskCompletion[]
 
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
@@ -368,4 +370,70 @@ model Company {
   foundedYear Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ── LMS ──────────────────────────────────────────────────────────────────────
+
+model LearningCourse {
+  id          String             @id @default(cuid())
+  title       String
+  description String?
+  category    String             @default("GENERAL") // TECHNICAL, SOFT_SKILLS, COMPLIANCE, ONBOARDING, GENERAL
+  createdBy   String             // employeeId of manager/admin
+  status      String             @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  modules     LearningModule[]
+  enrollments CourseEnrollment[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model LearningModule {
+  id          String         @id @default(cuid())
+  courseId    String
+  course      LearningCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  order       Int            @default(0)
+  tasks       LearningTask[]
+  createdAt   DateTime       @default(now())
+}
+
+model LearningTask {
+  id          String           @id @default(cuid())
+  moduleId    String
+  module      LearningModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        String           @default("READING") // READING, VIDEO, TASK, ASSIGNMENT
+  content     String?          // instructions or URL
+  dueInDays   Int?
+  order       Int              @default(0)
+  completions TaskCompletion[]
+  createdAt   DateTime         @default(now())
+}
+
+model CourseEnrollment {
+  id          String         @id @default(cuid())
+  courseId    String
+  course      LearningCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  employeeId  String
+  employee    Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  enrolledBy  String
+  enrolledAt  DateTime       @default(now())
+  completedAt DateTime?
+  status      String         @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, DROPPED
+
+  @@unique([courseId, employeeId])
+}
+
+model TaskCompletion {
+  id          String       @id @default(cuid())
+  taskId      String
+  task        LearningTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  employeeId  String
+  employee    Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  notes       String?
+  completedAt DateTime     @default(now())
+
+  @@unique([taskId, employeeId])
 }

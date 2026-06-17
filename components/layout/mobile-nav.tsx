@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Calendar, Target, Landmark,
   FileText, MessageSquare, ShieldCheck, Bell,
-  Users, Clock, DollarSign, Briefcase, FileSearch, Settings, LogOut
+  Users, Clock, DollarSign, Briefcase, FileSearch, Settings, LogOut, GraduationCap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ const employeeTabs = [
   { href: "/payroll",       icon: Landmark,        label: "My Pay" },
   { href: "/documents",     icon: FileText,        label: "Documents" },
   { href: "/chat",          icon: MessageSquare,   label: "Chat" },
+  { href: "/lms",           icon: GraduationCap,   label: "Learning" },
   { href: "/kyc",           icon: ShieldCheck,     label: "My KYC" },
   { href: "/announcements", icon: Bell,            label: "Engage" },
 ];
@@ -32,6 +33,7 @@ const adminTabs = [
   { href: "/documents",     icon: FileText,        label: "Docs" },
   { href: "/announcements", icon: Bell,            label: "Announce" },
   { href: "/chat",          icon: MessageSquare,   label: "Chat" },
+  { href: "/lms",           icon: GraduationCap,   label: "LMS" },
   { href: "/kyc",           icon: ShieldCheck,     label: "KYC" },
   { href: "/reports",       icon: FileSearch,      label: "Reports" },
   { href: "/settings",      icon: Settings,        label: "Settings" },
