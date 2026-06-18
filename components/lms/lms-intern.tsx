@@ -1,13 +1,14 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BookOpen, CheckCircle2, Circle, GraduationCap, ListTodo,
   Trophy, Clock, ChevronDown, ChevronRight, Video, FileText,
-  ClipboardCheck, PenLine,
+  ClipboardCheck, PenLine, RefreshCw,
 } from "lucide-react";
 
 type Task = {
@@ -46,12 +47,20 @@ export default function LmsIntern({
   enrollments: Enrollment[];
   completedTaskIds: string[];
 }) {
+  const router = useRouter();
   const [enrollments] = useState<Enrollment[]>(init);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set(initCompleted));
   const [loadingTask, setLoadingTask] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [expandedCourse, setExpandedCourse] = useState<string | null>(
     enrollments[0]?.course.id ?? null
   );
+
+  async function handleRefresh() {
+    setRefreshing(true);
+    router.refresh();
+    setTimeout(() => setRefreshing(false), 1500);
+  }
 
   async function toggleTask(taskId: string, done: boolean) {
     setLoadingTask(taskId);
@@ -81,9 +90,15 @@ export default function LmsIntern({
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Learning</h1>
-        <p className="text-gray-500 mt-1">Track your assigned courses and complete tasks</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">My Learning</h1>
+          <p className="text-gray-500 mt-1">Track your assigned courses and complete tasks</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing} className="gap-2">
+          <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+          {refreshing ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
 
       {/* Stats */}
@@ -132,6 +147,10 @@ export default function LmsIntern({
             <GraduationCap className="w-12 h-12 mx-auto mb-3 text-gray-300" />
             <p className="font-medium text-gray-500">No courses assigned yet</p>
             <p className="text-sm text-gray-400 mt-1">Your manager will assign learning courses to you</p>
+            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing} className="mt-4 gap-2">
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+              {refreshing ? "Checking..." : "Check for new courses"}
+            </Button>
           </CardContent>
         </Card>
       ) : (

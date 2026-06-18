@@ -4,6 +4,8 @@ import LmsManager from "@/components/lms/lms-manager";
 import LmsIntern from "@/components/lms/lms-intern";
 import { GraduationCap } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function LmsPage() {
   const session = await auth();
   if (!session?.user) return null;

@@ -112,31 +112,10 @@ export default function LmsManager({ courses: init, interns }: { courses: Course
       body: JSON.stringify({ courseId, employeeIds: selectedInterns }),
     });
     if (res.ok) {
-      const newEnrollments: Enrollment[] = selectedInterns.map((eid) => {
-        const intern = interns.find((i) => i.id === eid)!;
-        return {
-          id: `${courseId}-${eid}`,
-          employeeId: eid,
-          status: "IN_PROGRESS",
-          enrolledAt: new Date().toISOString(),
-          employee: { id: eid, firstName: intern.firstName, lastName: intern.lastName, employeeCode: intern.employeeCode },
-        };
-      });
-      setCourses((p) =>
-        p.map((c) =>
-          c.id === courseId
-            ? {
-                ...c,
-                enrollments: [
-                  ...c.enrollments.filter((e) => !selectedInterns.includes(e.employeeId)),
-                  ...newEnrollments,
-                ],
-              }
-            : c
-        )
-      );
       setEnrollDialog(null);
       setSelectedInterns([]);
+      // Refresh server component data so both manager and employee views are up-to-date
+      router.refresh();
     }
     setSaving(false);
   }
