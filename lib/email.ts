@@ -22,7 +22,7 @@ export async function sendEmail({ to, subject, htmlContent }: SendEmailParams) {
     },
     body: JSON.stringify({
       sender: {
-        email: process.env.BREVO_SENDER_EMAIL || "itcrewindia@gmail.com",
+        email: process.env.BREVO_SENDER_EMAIL || "noreply@orbilox.com",
         name: process.env.BREVO_SENDER_NAME || "Orbilox HRM",
       },
       to,
