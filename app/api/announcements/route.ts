@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import { sendEmail, emailLayout } from "@/lib/email";
 
 export async function GET() {
   try {
@@ -45,6 +46,30 @@ export async function POST(req: NextRequest) {
         expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
       },
     });
+
+    // Notify employees by email — fire and forget
+    db.employee.findMany({
+      where: {
+        status: "ACTIVE",
+        ...(data.targetRole ? { user: { role: data.targetRole } } : {}),
+      },
+      select: { firstName: true, email: true },
+    }).then((employees) => {
+      Promise.allSettled(
+        employees.map((emp) =>
+          sendEmail({
+            to: [{ email: emp.email, name: emp.firstName }],
+            subject: `📢 ${announcement.title}`,
+            htmlContent: emailLayout(
+              announcement.title,
+              `<p>Hi ${emp.firstName},</p>
+               <p>${announcement.content}</p>
+               <a href="https://hr.orbilox.com/announcements" style="display:inline-block; margin-top:16px; background:#4f46e5; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;">View Announcements</a>`
+            ),
+          })
+        )
+      );
+    }).catch((err) => console.error("Failed to send announcement emails:", err));
 
     return NextResponse.json(announcement, { status: 201 });
   } catch (error) {
