@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
+import { sendEmail, emailLayout } from "@/lib/email";
 
 export async function GET(req: NextRequest) {
   try {
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
       const loginPassword = data.loginPassword || "Welcome@123";
       const loginRole = data.loginRole || "EMPLOYEE";
       const hashedPassword = await bcrypt.hash(loginPassword, 10);
-      await db.user
+      const createdUser = await db.user
         .create({
           data: {
             email: loginEmail,
@@ -84,7 +85,27 @@ export async function POST(req: NextRequest) {
             employeeId: employee.id,
           },
         })
-        .catch(() => {}); // ignore if user already exists
+        .catch(() => null); // ignore if user already exists
+
+      // Notify the new employee with their login credentials — fire and forget
+      if (createdUser) {
+        sendEmail({
+          to: [{ email: employee.email, name: employee.firstName }],
+          subject: "Welcome to Orbilox — Your account is ready",
+          htmlContent: emailLayout(
+            "Welcome to Orbilox HRM",
+            `<p>Hi ${employee.firstName},</p>
+             <p>Welcome aboard! HR has set up your employee profile and portal login. Use the credentials below to sign in:</p>
+             <table style="width:100%; margin: 16px 0; border-collapse: collapse;">
+               <tr><td style="padding:8px 0; color:#6b7280;">Login Email</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginEmail}</td></tr>
+               <tr><td style="padding:8px 0; color:#6b7280;">Temporary Password</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginPassword}</td></tr>
+               <tr><td style="padding:8px 0; color:#6b7280;">Role</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginRole}</td></tr>
+             </table>
+             <p>For security, please log in and change your password as soon as possible.</p>
+             <a href="https://hr.orbilox.com/login" style="display:inline-block; margin-top:16px; background:#4f46e5; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;">Log In to Orbilox</a>`
+          ),
+        }).catch((err) => console.error("Failed to send new-employee welcome email:", err));
+      }
     }
 
     return NextResponse.json(employee, { status: 201 });
