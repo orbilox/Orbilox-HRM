@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/saturday-assignment",
       "schedule": "15 5 * * 6"
+    },
+    {
+      "path": "/api/cron/auto-attendance",
+      "schedule": "0 16 * * 1-5"
     }
   ]
 }
