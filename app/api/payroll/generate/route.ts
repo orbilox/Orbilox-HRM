@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import { sendEmail, emailLayout } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -114,6 +115,28 @@ export async function POST(req: NextRequest) {
 
       results.push(payslip);
     }
+
+    // Notify each employee their payslip is ready
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const monthName = MONTHS[month - 1];
+    await Promise.allSettled(
+      employees.map((emp) =>
+        emp.email ? sendEmail({
+          to: [{ email: emp.email, name: emp.firstName }],
+          subject: `💰 Your Payslip for ${monthName} ${year} is Ready`,
+          htmlContent: emailLayout(`Payslip for ${monthName} ${year}`, `
+            <p>Hi ${emp.firstName},</p>
+            <p>Your payslip for <strong>${monthName} ${year}</strong> has been generated and is now available on the Orbilox HRM portal.</p>
+            <div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:8px;padding:16px 20px;margin:20px 0;">
+              <p style="margin:0 0 4px;font-size:11px;color:#6b7280;text-transform:uppercase;">Net Salary</p>
+              <p style="margin:0;font-size:28px;font-weight:800;color:#059669;">₹${(emp.basicSalary + emp.hra + emp.da + emp.ta + emp.otherAllowance - emp.pfEmployee - emp.esiEmployee - emp.professionalTax).toFixed(2)}</p>
+            </div>
+            <p>Log in to the HRM portal to view, download, or print your detailed payslip.</p>
+            <a href="https://hr.orbilox.com/payroll" style="display:inline-block;margin-top:16px;background:#059669;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;">View My Payslip →</a>
+          `),
+        }) : Promise.resolve()
+      )
+    );
 
     return NextResponse.json(
       { message: `Payroll generated for ${results.length} employee(s)`, payslips: results },

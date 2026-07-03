@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import { sendEmail, emailLayout } from "@/lib/email";
 
 export async function GET(req: NextRequest) {
   try {
@@ -56,10 +57,30 @@ export async function POST(req: NextRequest) {
         status: data.status ?? "PENDING",
       },
       include: {
-        employee: { select: { id: true, employeeCode: true, firstName: true, lastName: true, designation: true } },
+        employee: { select: { id: true, employeeCode: true, firstName: true, lastName: true, designation: true, email: true } },
         reviewer: { select: { id: true, employeeCode: true, firstName: true, lastName: true } },
       },
     });
+
+    // Notify employee that a performance review has been initiated
+    if (review.employee.email) {
+      await sendEmail({
+        to: [{ email: review.employee.email, name: review.employee.firstName }],
+        subject: `📊 Your Performance Review Has Been Initiated`,
+        htmlContent: emailLayout("Performance Review Started", `
+          <p>Hi ${review.employee.firstName},</p>
+          <p>A performance review has been initiated for you by <strong>${review.reviewer.firstName} ${review.reviewer.lastName}</strong>.</p>
+          <table style="width:100%;margin:20px 0;border-collapse:collapse;border-radius:8px;overflow:hidden;">
+            <tr style="background:#f3f4f6;"><td style="padding:10px 14px;color:#6b7280;font-size:13px;width:40%;">Review Period</td><td style="padding:10px 14px;font-weight:700;color:#111827;">${review.period}</td></tr>
+            <tr style="background:#fff;"><td style="padding:10px 14px;color:#6b7280;font-size:13px;">Year</td><td style="padding:10px 14px;font-weight:700;color:#111827;">${review.year}</td></tr>
+            <tr style="background:#f3f4f6;"><td style="padding:10px 14px;color:#6b7280;font-size:13px;">Reviewer</td><td style="padding:10px 14px;font-weight:700;color:#4f46e5;">${review.reviewer.firstName} ${review.reviewer.lastName}</td></tr>
+            <tr style="background:#fff;"><td style="padding:10px 14px;color:#6b7280;font-size:13px;">Status</td><td style="padding:10px 14px;font-weight:700;color:#d97706;">Pending</td></tr>
+          </table>
+          <p>Log in to the HRM portal to view the details of your performance review.</p>
+          <a href="https://hr.orbilox.com/performance" style="display:inline-block;margin-top:16px;background:#4f46e5;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;">View My Review →</a>
+        `),
+      }).catch(() => null);
+    }
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
