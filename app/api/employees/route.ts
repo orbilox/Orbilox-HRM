@@ -91,18 +91,30 @@ export async function POST(req: NextRequest) {
       if (createdUser) {
         await sendEmail({
           to: [{ email: employee.email, name: employee.firstName }],
-          subject: "Welcome to Orbilox — Your account is ready",
+          subject: "🎉 Welcome to Orbilox HRM — Your Login is Ready!",
           htmlContent: emailLayout(
-            "Welcome to Orbilox HRM",
+            `Welcome to Orbilox, ${employee.firstName}! 🎉`,
             `<p>Hi ${employee.firstName},</p>
-             <p>Welcome aboard! HR has set up your employee profile and portal login. Use the credentials below to sign in:</p>
-             <table style="width:100%; margin: 16px 0; border-collapse: collapse;">
-               <tr><td style="padding:8px 0; color:#6b7280;">Login Email</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginEmail}</td></tr>
-               <tr><td style="padding:8px 0; color:#6b7280;">Temporary Password</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginPassword}</td></tr>
-               <tr><td style="padding:8px 0; color:#6b7280;">Role</td><td style="padding:8px 0; font-weight:600; color:#111827;">${loginRole}</td></tr>
+             <p>Congratulations and a warm welcome to the <strong>Orbilox</strong> family! 🎊 We're thrilled to have you on board.</p>
+             <p>Your Orbilox HRM portal account is set up and ready. Use the credentials below to sign in:</p>
+             <table style="width:100%; margin: 20px 0; border-collapse: collapse; border-radius:8px; overflow:hidden;">
+               <tr style="background:#f3f4f6;">
+                 <td style="padding:12px 16px; color:#6b7280; font-size:13px; width:40%;">Login Email</td>
+                 <td style="padding:12px 16px; font-weight:700; color:#111827; font-size:14px;">${loginEmail}</td>
+               </tr>
+               <tr style="background:#fff;">
+                 <td style="padding:12px 16px; color:#6b7280; font-size:13px;">Temporary Password</td>
+                 <td style="padding:12px 16px; font-weight:700; color:#4f46e5; font-size:14px;">${loginPassword}</td>
+               </tr>
+               <tr style="background:#f3f4f6;">
+                 <td style="padding:12px 16px; color:#6b7280; font-size:13px;">Role</td>
+                 <td style="padding:12px 16px; font-weight:700; color:#111827; font-size:14px;">${loginRole}</td>
+               </tr>
              </table>
-             <p>For security, please log in and change your password as soon as possible.</p>
-             <a href="https://hr.orbilox.com/login" style="display:inline-block; margin-top:16px; background:#4f46e5; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;">Log In to Orbilox</a>`
+             <p style="color:#ef4444; font-size:13px;">⚠️ For your security, please log in and change your password immediately.</p>
+             <p>Through the HRM portal you can view your payslips, apply for leaves, check announcements, access your learning courses, and much more.</p>
+             <a href="https://hr.orbilox.com/login" style="display:inline-block; margin-top:20px; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:700; font-size:15px;">Log In to Orbilox HRM →</a>
+             <p style="margin-top:24px; color:#6b7280; font-size:13px;">Welcome aboard — we're excited to have you with us! 🚀</p>`
           ),
         }).catch((err) => console.error("Failed to send new-employee welcome email:", err));
       }

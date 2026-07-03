@@ -1,53 +1,44 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
 import { sendEmail, emailLayout } from "@/lib/email";
 
-export async function GET() {
+export async function POST() {
   const session = await auth();
   if (!session || !["ADMIN", "HR"].includes(session.user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
+
+  const TEMP_PASSWORD = "Welcome@123";
+  const hashed = await bcrypt.hash(TEMP_PASSWORD, 10);
+
+  // Fetch all users linked to an employee
   const users = await db.user.findMany({
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true, email: true, role: true, employeeId: true, createdAt: true, updatedAt: true,
-      employee: { select: { firstName: true, lastName: true } },
+    where: { employeeId: { not: null } },
+    include: {
+      employee: { select: { firstName: true, lastName: true, email: true } },
     },
   });
-  return NextResponse.json(users);
-}
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["ADMIN", "HR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
-  try {
-    const data = await req.json();
-    const hashed = await bcrypt.hash(data.password, 10);
-    const user = await db.user.create({
-      data: {
-        email: data.email,
-        password: hashed,
-        role: data.role ?? "EMPLOYEE",
-        employeeId: data.employeeId ?? null,
-      },
-      include: { employee: { select: { firstName: true, email: true } } },
-    });
+  let sent = 0;
+  let failed = 0;
 
-    // Notify the employee with their new login credentials
-    const notifyEmail = user.employee?.email ?? user.email;
-    const firstName = user.employee?.firstName ?? "";
-    await sendEmail({
-      to: [{ email: notifyEmail, name: firstName }],
+  for (const user of users) {
+    const employeeEmail = user.employee?.email;
+    if (!employeeEmail) { failed++; continue; }
+
+    // Reset password so the employee has a known credential
+    await db.user.update({ where: { id: user.id }, data: { password: hashed } });
+
+    const result = await sendEmail({
+      to: [{ email: employeeEmail, name: user.employee?.firstName ?? "" }],
       subject: "🎉 Welcome to Orbilox HRM — Your Login is Ready!",
       htmlContent: emailLayout(
-        `Welcome to Orbilox${firstName ? `, ${firstName}` : ""}! 🎉`,
-        `<p>Hi ${firstName || "there"},</p>
+        `Welcome to Orbilox, ${user.employee?.firstName ?? ""}! 🎉`,
+        `<p>Hi ${user.employee?.firstName ?? ""},</p>
          <p>Congratulations and a warm welcome to the <strong>Orbilox</strong> family! 🎊 We're thrilled to have you on board.</p>
-         <p>Your Orbilox HRM portal account is set up and ready. Use the credentials below to sign in:</p>
+         <p>Your Orbilox HRM portal account is set up and ready. Use the credentials below to sign in and get started:</p>
          <table style="width:100%; margin: 20px 0; border-collapse: collapse; border-radius:8px; overflow:hidden;">
            <tr style="background:#f3f4f6;">
              <td style="padding:12px 16px; color:#6b7280; font-size:13px; width:40%;">Login Email</td>
@@ -55,7 +46,7 @@ export async function POST(req: NextRequest) {
            </tr>
            <tr style="background:#fff;">
              <td style="padding:12px 16px; color:#6b7280; font-size:13px;">Temporary Password</td>
-             <td style="padding:12px 16px; font-weight:700; color:#4f46e5; font-size:14px;">${data.password}</td>
+             <td style="padding:12px 16px; font-weight:700; color:#4f46e5; font-size:14px;">${TEMP_PASSWORD}</td>
            </tr>
            <tr style="background:#f3f4f6;">
              <td style="padding:12px 16px; color:#6b7280; font-size:13px;">Role</td>
@@ -67,10 +58,10 @@ export async function POST(req: NextRequest) {
          <a href="https://hr.orbilox.com/login" style="display:inline-block; margin-top:20px; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:700; font-size:15px;">Log In to Orbilox HRM →</a>
          <p style="margin-top:24px; color:#6b7280; font-size:13px;">Welcome aboard — we're excited to have you with us! 🚀</p>`
       ),
-    }).catch((err) => console.error("Failed to send login welcome email:", err));
+    }).catch(() => ({ error: true }));
 
-    return NextResponse.json({ id: user.id, email: user.email, role: user.role }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
+    if ("error" in result) { failed++; } else { sent++; }
   }
+
+  return NextResponse.json({ sent, failed, total: users.length });
 }

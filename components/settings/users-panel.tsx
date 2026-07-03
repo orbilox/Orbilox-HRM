@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserCog, Plus, X, Loader2, Eye, EyeOff } from "lucide-react";
+import { UserCog, Plus, X, Loader2, Eye, EyeOff, Mail, CheckCircle2 } from "lucide-react";
 
 interface User {
   id: string;
@@ -43,6 +43,8 @@ export default function UsersPanel({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+  const [bulkSending, setBulkSending] = useState(false);
+  const [bulkResult, setBulkResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
 
   // Form state
   const [email, setEmail] = useState("");
@@ -83,6 +85,22 @@ export default function UsersPanel({
     }
   }
 
+  async function handleBulkWelcome() {
+    if (!confirm(`This will reset ALL ${users.filter(u => u.employeeId).length} employee passwords to "Welcome@123" and email them their credentials. Continue?`)) return;
+    setBulkSending(true);
+    setBulkResult(null);
+    try {
+      const res = await fetch("/api/users/bulk-welcome", { method: "POST" });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed to send welcome emails");
+      setBulkResult(json);
+    } catch (err) {
+      alert((err as Error).message);
+    } finally {
+      setBulkSending(false);
+    }
+  }
+
   // Employees that don't already have a login
   const unlinkedEmployees = employees.filter(
     (emp) => !users.some((u) => u.employeeId === emp.id)
@@ -90,14 +108,29 @@ export default function UsersPanel({
 
   return (
     <div>
-      {/* Header with Add button */}
-      <div className="flex items-center justify-between mb-4">
+      {/* Header with actions */}
+      <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <p className="text-sm text-gray-500">{users.length} user account{users.length !== 1 ? "s" : ""}</p>
-        <Button size="sm" onClick={() => setShowDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Login
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={handleBulkWelcome} disabled={bulkSending}>
+            {bulkSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
+            {bulkSending ? "Sending..." : "Send Welcome Emails to All"}
+          </Button>
+          <Button size="sm" onClick={() => setShowDialog(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Login
+          </Button>
+        </div>
       </div>
+
+      {/* Bulk send result banner */}
+      {bulkResult && (
+        <div className="flex items-center gap-2 mb-4 bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-800">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-green-600" />
+          <span>Welcome emails sent! <strong>{bulkResult.sent}</strong> delivered, <strong>{bulkResult.failed}</strong> failed out of {bulkResult.total} total accounts. Passwords have been reset to <strong>Welcome@123</strong>.</span>
+          <button onClick={() => setBulkResult(null)} className="ml-auto text-green-500 hover:text-green-700"><X className="w-4 h-4" /></button>
+        </div>
+      )}
 
       {/* Dialog */}
       {showDialog && (
