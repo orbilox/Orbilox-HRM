@@ -87,9 +87,9 @@ export async function POST(req: NextRequest) {
         })
         .catch(() => null); // ignore if user already exists
 
-      // Notify the new employee with their login credentials — fire and forget
+      // Notify the new employee with their login credentials
       if (createdUser) {
-        sendEmail({
+        await sendEmail({
           to: [{ email: employee.email, name: employee.firstName }],
           subject: "Welcome to Orbilox — Your account is ready",
           htmlContent: emailLayout(

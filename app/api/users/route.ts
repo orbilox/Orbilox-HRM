@@ -37,9 +37,9 @@ export async function POST(req: NextRequest) {
       include: { employee: { select: { firstName: true, email: true } } },
     });
 
-    // Notify the employee with their new login credentials — fire and forget
+    // Notify the employee with their new login credentials
     const notifyEmail = user.employee?.email ?? user.email;
-    sendEmail({
+    await sendEmail({
       to: [{ email: notifyEmail, name: user.employee?.firstName ?? "" }],
       subject: "Your Orbilox HRM login has been created",
       htmlContent: emailLayout(
