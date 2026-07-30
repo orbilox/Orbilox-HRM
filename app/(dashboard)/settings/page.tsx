@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Users, Calendar, Gift, UserCog, Plus, Trash2 } from "lucide-react";
 import UsersPanel from "@/components/settings/users-panel";
+import DepartmentsPanel from "@/components/settings/departments-panel";
 
 async function getSettingsData() {
   const [company, departments, leaveTypes, holidays, users, employees] = await Promise.all([
@@ -128,40 +129,10 @@ export default async function SettingsPage() {
         <TabsContent value="departments">
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold">Departments</CardTitle>
-                <Button size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Department
-                </Button>
-              </div>
+              <CardTitle className="text-base font-semibold">Departments</CardTitle>
             </CardHeader>
             <CardContent>
-              {departments.length === 0 ? (
-                <div className="text-center py-10 text-gray-400">
-                  <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">No departments yet</p>
-                </div>
-              ) : (
-                <div className="divide-y">
-                  {departments.map((dept) => (
-                    <div key={dept.id} className="flex items-center justify-between py-3">
-                      <div>
-                        <div className="font-medium text-gray-900">{dept.name}</div>
-                        {dept.description && (
-                          <div className="text-xs text-gray-400 mt-0.5">{dept.description}</div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-500">{dept._count.employees} employees</span>
-                        <button className="text-red-400 hover:text-red-600 transition-colors p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <DepartmentsPanel initialDepartments={departments} />
             </CardContent>
           </Card>
         </TabsContent>
